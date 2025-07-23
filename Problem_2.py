@@ -80,6 +80,24 @@ def employee_importance(employees, id):
     return total_importance
 
 
+def employee_importance_dfs(employees, id):
+    def dfs(id):
+        nonlocal total_importance
+        total_importance += h[id][0]
+        for sub_id in h[id][1]:
+            dfs(sub_id)
+
+    if not employees:
+        return -1
+
+    h = defaultdict(list)
+    for e in employees:
+        h[e.id] = [e.importance, e.subordinates]
+
+    total_importance = 0
+    dfs(id)
+    return total_importance
+
 def run_employee_importance():
     tests = [([[1,5,[2,3]],[2,3,[]],[3,3,[]]], 1, 11),
              ([[1,5,[2,3]],[2,3,[]],[3,3,[]]], 2, 3),
@@ -89,9 +107,13 @@ def run_employee_importance():
         employees, id, ans = test[0], test[1], test[2]
         emp_objects = make_list_of_objects(employees)
         print(f"\nEmployees = {employees}")
-        print(f"Target employee id = {id}")
-        importance = employee_importance(emp_objects, id)
-        print(f"Target employee importance = {importance}")
-        print(f"Pass: {ans == importance}")
+        for method in ['bfs', 'dfs']:
+            if method == 'bfs':
+                importance = employee_importance(emp_objects, id)
+            elif method == 'dfs':
+                importance = employee_importance_dfs(emp_objects, id)
+            print(f"Target employee id = {id}")
+            print(f"{method}: Target employee importance = {importance}")
+            print(f"Pass: {ans == importance}")
 
 run_employee_importance()
